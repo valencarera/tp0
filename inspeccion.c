@@ -217,7 +217,7 @@ int main()
 
 
     // sigo con el resto de las preguntas solo si "continuarejecucion=true"
-    if (continuarejecucion)
+    /*if (continuarejecucion)
     {
         printf("continuar ejecucion");
         do
@@ -225,7 +225,7 @@ int main()
             preg 2
         } while (condition);
 
-        /* do
+         do
         {
            
 
@@ -236,8 +236,8 @@ int main()
         {
             // input valor
             // function validar
-        } while (condition); */
-    }
+        } while (condition); 
+    }*/
 
     return 0;
 }
