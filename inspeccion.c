@@ -33,28 +33,24 @@ typedef struct horario {
 const char *SU_RESPUESTA = "Su respuesta es: ";
 
 // Pre: -
-// Post: Pregunta hasta que la respuesta ingresada sea válida.
-int obtener_cantidad_pasajeros() {
-    int cantidad_pasajeros;
+// Post: Pide al usuario la cantidad de pasajeros que realizarán el viaje inaugural y lo devuelve.
+void obtener_cantidad_pasajeros(int *cantidad_pasajeros) {
     printf("¿Cuántos pasajeros realizarán el viaje inaugural? (1-250)\n");
     printf("%s", SU_RESPUESTA);
     scanf("%i", &cantidad_pasajeros);
-    return cantidad_pasajeros;
 }
 
 // Pre: -
-// Post: Pregunta hasta que la respuesta ingresada sea válida.
-float obtener_distancia_frenado() {
-    float distancia_frenado;
+// Post: Pide al usuario la distancia de frenado y la devuelve.
+void obtener_distancia_frenado(float *distancia_frenado) {
     printf("¿Qué distancia recorrió el monorriel durante la prueba de los frenos marca Patito? (1-150)\n");
     printf("%s", SU_RESPUESTA);
     scanf("%f", &distancia_frenado);
-    return distancia_frenado;
 }
 
 // Pre: -
-// Post: Pregunta hasta que la respuesta ingresada sea válida.
-horario_t obtener_horario_programado() {
+// Post: Pide al usuario el horario programado y lo devuelve.
+void obtener_horario_programado(horario_t *horario) { // VOID
     int hora;
     int minuto;
     
@@ -63,16 +59,13 @@ horario_t obtener_horario_programado() {
     scanf("%i:%i", &hora, &minuto);
     
     horario_t horario;
-    horario.hora = hora;
-    horario.minuto = minuto;
-
-    return horario;
+    *horario->hora = hora;
+    *horario->minuto = minuto;
 }
 
 // Pre: -
-// Post: Pregunta hasta que la respuesta ingresada sea válida.
-char obtener_contenido_compartimiento() {
-    char contenido;
+// Post: Pide al usuario el contenido del compartimiento y lo devuelve.
+char obtener_contenido_compartimiento(char *contenido) { 
     printf("¿Qué encontró Marge en el compartimiento del matafuegos?\n");
     printf("Ingresar respuesta en mayúsculas.\n");
     printf("[M] Matafuegos\n");
@@ -80,9 +73,10 @@ char obtener_contenido_compartimiento() {
     printf("[V] Compartimiento vacío\n");
     printf("%s", SU_RESPUESTA);
     scanf(" %c", &contenido);
-    return contenido;
 }
 
+// Pre: -
+// Post: Valida que la cantidad de pasajeros ingresada esté entre 0 y MAXIMO_RANGO_PASAJEROS.
 bool validar_ingreso_pasajeros(int cantidad_pasajeros) {
     bool es_valido = true;
     if (0 < cantidad_pasajeros && cantidad_pasajeros <= MAXIMO_RANGO_PASAJEROS) {
@@ -94,6 +88,8 @@ bool validar_ingreso_pasajeros(int cantidad_pasajeros) {
     return es_valido;
 }
 
+// Pre: -
+// Post: Valida que la distancia de frenado ingresada esté entre 0 y MAXIMA_DISTANCIA.
 bool validar_ingreso_distancia(float distancia_frenado) {
     bool es_valido = true;
     if (0 < distancia_frenado && distancia_frenado <= MAXIMA_DISTANCIA){
@@ -105,6 +101,10 @@ bool validar_ingreso_distancia(float distancia_frenado) {
     return es_valido;
 }
 
+// Pre: -
+// Post:
+// Valida que la hora esté entre HORA_MINIMA y HORA_MAXIMA.
+// Valida que el minuto esté entre MINUTO_MINIMO y MINUTO_MAXIMO.
 bool validar_ingreso_horario(horario_t horario) {
     bool es_valido = true;
     if (horario.hora >= 0 && horario.minuto >= 0) {
@@ -118,6 +118,8 @@ bool validar_ingreso_horario(horario_t horario) {
     return es_valido;
 }
 
+// Pre: -
+// Post: Valida que el contenido ingresado sea uno de los valores válidos(VACIO, ZARIGUEYAS, MATAFUEGOS).
 bool validar_ingreso_contenido(char contenido) {
     bool es_valido = true;
     if (contenido == VACIO || contenido == ZARIGUEYAS || contenido == MATAFUEGOS) {
@@ -129,31 +131,38 @@ bool validar_ingreso_contenido(char contenido) {
     return es_valido;
 }
 
-int asignar_puntos_distancia(float distancia_frenado) {
+// Pre: distancia_frenado debe estar entre 0 y MAXIMA_DISTANCIA.
+// Post:
+// Devuelve puntos_distancia = 0 si la distancia de frenado es menor o igual a MAXIMA_DISTANCIA_SEGURA.
+// Devuelve puntos_distancia = -1 si la distancia de frenado está entre MAXIMA_DISTANCIA_SEGURA y DISTANCIA_MEDIA.
+// Devuelve puntos_distancia = -2 si la distancia de frenado es mayor a DISTANCIA_MEDIA.
+int asignar_puntos_distancia(float *distancia_frenado) {
     int puntos_distancia = 0;
-    if (MAXIMA_DISTANCIA_SEGURA < distancia_frenado && distancia_frenado <= DISTANCIA_MEDIA) {
+    if (MAXIMA_DISTANCIA_SEGURA < *distancia_frenado && *distancia_frenado <= DISTANCIA_MEDIA) {
         puntos_distancia = -1;
     }
-    else if (distancia_frenado > DISTANCIA_MEDIA) {
+    else if (*distancia_frenado > DISTANCIA_MEDIA) {
         puntos_distancia = -2;
     }
     return puntos_distancia;
 }
 
-int asignar_puntos_horario(horario_t horario) {
+// Pre: horario.hora debe estar entre HORA_MINIMA y HORA_MAXIMA.
+// Post:
+int asignar_puntos_horario(horario_t *horario) {
     int puntos_horario = 0;
-    if (horario.hora > HORA_MAXIMA_APTA || horario.hora < HORA_MINIMA_APTA) {
+    if (horario->hora > HORA_MAXIMA_APTA || horario->hora < HORA_MINIMA_APTA) {
         puntos_horario = -3;
     }
     return puntos_horario;
 }
 
-int asignar_puntos_contenido(char contenido) {
+int asignar_puntos_contenido(char *contenido) {
     int puntos_contenido = 1;
-    if (contenido == ZARIGUEYAS) {
+    if (*contenido == ZARIGUEYAS) {
         puntos_contenido = -1;
     }
-    else if (contenido == VACIO) {
+    else if (*contenido == VACIO) {
         puntos_contenido = -3;
     }
     return puntos_contenido;
