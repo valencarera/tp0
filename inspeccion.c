@@ -34,8 +34,8 @@ const int PUNTOS_DISTANCIA_NO_APROBADA = -2;
 const int PUNTOS_HORARIO_APROBADO = 0;
 const int PUNTOS_HORARIO_NO_APROBADO = -3;
 
-const int PUNTOS_CONTENIDO_ZARIGUEYAS = 1;
-const int PUNTOS_CONTENIDO_MATAFUEGOS = 0;
+const int PUNTOS_CONTENIDO_MATAFUEGOS = 1;
+const int PUNTOS_CONTENIDO_ZARIGUEYAS = -1;
 const int PUNTOS_CONTENIDO_VACIO = -3;
 
 const int MINIMO_PUNTAJE_APTO = 8;
@@ -73,12 +73,7 @@ void obtener_distancia_frenado(float *distancia_frenado) {
 void obtener_horario_programado(horario_t *horario) {
     printf("¿A qué hora está programado el viaje inaugural? (formato: hh:mm)\n");
     printf("%s", SU_RESPUESTA);
-    scanf("%i:%i", &hora, &minuto);
-    
-    horario_t horario_ingresado;
-    horario_ingresado.hora = hora;
-    horario_ingresado.minuto = minuto;
-    *horario = horario_ingresado;
+    scanf("%i:%i", &horario->hora, &horario->minuto);
 }
 
 // Pre: -
@@ -274,6 +269,7 @@ int main() {
             obtener_horario_programado(&horario);
             condicion = validar_ingreso_horario(&horario);
             puntos_horario = asignar_puntos_horario(horario);
+            printf("hora: %i, minuto: %i\n", horario.hora, horario.minuto);
             printf("puntos horario: %i\n", puntos_horario);
         } while (condicion);
 
