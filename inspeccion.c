@@ -71,9 +71,6 @@ void obtener_distancia_frenado(float *distancia_frenado) {
 // Pre: -
 // Post: Pide al usuario el horario programado y lo devuelve.
 void obtener_horario_programado(horario_t *horario) {
-    int hora;
-    int minuto;
-    
     printf("¿A qué hora está programado el viaje inaugural? (formato: hh:mm)\n");
     printf("%s", SU_RESPUESTA);
     scanf("%i:%i", &hora, &minuto);
