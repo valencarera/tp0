@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+const int PUNTAJE_INICIAL = 10;
 const int PUNTAJE_MAXIMO = 10;
 
 const int MINIMO_RANGO_PASAJEROS = 1;
@@ -123,8 +124,8 @@ bool validar_ingreso_distancia(float *distancia_frenado) {
 
 // Pre: -
 // Post:
-// Valida que la hora esté entre HORA_MINIMA y HORA_MAXIMA.
-// Valida que el minuto esté entre MINUTO_MINIMO y MINUTO_MAXIMO.
+//  Valida que la hora esté entre HORA_MINIMA y HORA_MAXIMA.
+//  Valida que el minuto esté entre MINUTO_MINIMO y MINUTO_MAXIMO.
 bool validar_ingreso_horario(horario_t *horario) {
     bool es_valido = true;
     if (horario->hora >= HORA_MINIMA && horario->minuto >= MINUTO_MINIMO) {
@@ -151,11 +152,11 @@ bool validar_ingreso_contenido(char *contenido) {
     return es_valido;
 }
 
-// Pre: distancia_frenado debe estar entre 0 y MAXIMA_DISTANCIA.
+// Pre: distancia_frenado debe estar entre MINIMA_DISTANCIA_SEGURA y MAXIMA_DISTANCIA.
 // Post:
-// Devuelve puntos_distancia = 0 si la distancia de frenado es menor o igual a MAXIMA_DISTANCIA_SEGURA.
-// Devuelve puntos_distancia = -1 si la distancia de frenado está entre MAXIMA_DISTANCIA_SEGURA y DISTANCIA_MEDIA.
-// Devuelve puntos_distancia = -2 si la distancia de frenado es mayor a DISTANCIA_MEDIA.
+//  Devuelve puntos_distancia = PUNTOS_DISTANCIA_APROBADA si la distancia de frenado es menor o igual a MAXIMA_DISTANCIA_SEGURA.
+//  Devuelve puntos_distancia = PUNTOS_DISTANCIA_FALLA si la distancia de frenado está entre MAXIMA_DISTANCIA_SEGURA y DISTANCIA_MEDIA.
+//  Devuelve puntos_distancia = PUNTOS_DISTANCIA_NO_APROBADA si la distancia de frenado es mayor a DISTANCIA_MEDIA.
 int asignar_puntos_distancia(float distancia_frenado) {
     int puntos_distancia = 0;
     if (distancia_frenado <= MAXIMA_DISTANCIA_SEGURA) {
@@ -172,6 +173,8 @@ int asignar_puntos_distancia(float distancia_frenado) {
 
 // Pre: horario.hora debe estar entre HORA_MINIMA y HORA_MAXIMA.
 // Post:
+//  Devuelve puntos_horario = PUNTOS_HORARIO_APROBADO si la hora del horario está entre HORA_MINIMA_APTA y HORA_MAXIMA_APTA.
+//  Devuelve puntos_horario = PUNTOS_HORARIO_NO_APROBADO si la hora del horario es menor a HORA_MINIMA_APTA o mayor a HORA_MAXIMA
 int asignar_puntos_horario(horario_t horario) {
     int puntos_horario = 0;
     if (horario.hora > HORA_MAXIMA_APTA || horario.hora < HORA_MINIMA_APTA) {
@@ -183,6 +186,11 @@ int asignar_puntos_horario(horario_t horario) {
     return puntos_horario;
 }
 
+// Pre: contenido debe ser uno de los valores válidos(VACIO, ZARIGUEYAS, MATAFUEGOS).
+// Post:
+//  Devuelve puntos_contenido = PUNTOS_CONTENIDO_ZARIGUEYAS si el contenido es ZARIGUEYAS.
+//  Devuelve puntos_contenido = PUNTOS_CONTENIDO_VACIO si el contenido es VACIO.
+//  Devuelve puntos_contenido = PUNTOS_CONTENIDO_MATAFUEGOS si el contenido es MATAFUEGOS.
 int asignar_puntos_contenido(char contenido) {
     int puntos_contenido = 0;
     if (contenido == ZARIGUEYAS) {
@@ -197,14 +205,24 @@ int asignar_puntos_contenido(char contenido) {
     return puntos_contenido;
 }
 
-int calcular_puntaje(int puntaje_inicial, int puntos_distancia, int puntos_horario, int puntos_contenido) {
-    int puntaje_final = puntaje_inicial + puntos_distancia + puntos_horario + puntos_contenido;
+// Pre:
+//  puntos_distancia debe ser uno de los valores válidos(PUNTOS_DISTANCIA_APROBADA, PUNTOS_DISTANCIA_FALLA, PUNTOS_DISTANCIA_NO_APROBADA).
+//  puntos_horario debe ser uno de los valores válidos(PUNTOS_HORARIO_APROBADO, PUNTOS_HORARIO_NO_APROBADO).
+//  puntos_contenido debe ser uno de los valores válidos(PUNTOS_CONTENIDO_ZARIGUEYAS, PUNTOS_CONTENIDO_MATAFUEGOS, PUNTOS_CONTENIDO_VACIO).
+// Post: Devuelve el puntaje final sumado a PUNTAJE_INICIAL.
+int calcular_puntaje(int puntos_distancia, int puntos_horario, int puntos_contenido) {
+    int puntaje_final = PUNTAJE_INICIAL + puntos_distancia + puntos_horario + puntos_contenido;
     if (puntaje_final >= PUNTAJE_MAXIMO) {
         puntaje_final = PUNTAJE_MAXIMO;
     }
     return puntaje_final;
 }
 
+// Pre: puntaje_final debe ser un valor entre 0 y PUNTAJE_MAXIMO.
+// Post:
+//  Devuelve estado = ESTADO_APTO si puntaje_final es mayor o igual a MINIMO_PUNTAJE_APTO.
+//  Devuelve estado = ESTADO_REQUIERE_REVISION si puntaje_final es mayor o igual a MINIMO_PUNTAJE_REQUIERE_REVISION y menor a MINIMO_PUNTAJE_APTO.
+//  Devuelve estado = ESTADO_NO_APTO si puntaje_final es menor a MINIMO_PUNTAJE_REQUIERE_REVISION.
 const char *asignar_estado(int puntaje_final) {
     const char *estado;
     if (puntaje_final >= MINIMO_PUNTAJE_APTO) {
@@ -229,7 +247,6 @@ int main() {
     bool condicion;
 
     int puntaje_final = 0;
-    int puntaje_inicial = 10; 
     int puntos_distancia = 0;
     int puntos_horario = 0;
     int puntos_contenido = 0;
@@ -270,7 +287,7 @@ int main() {
             printf("puntos contenido: %i\n", puntos_contenido);
         } while (condicion);
 
-        puntaje_final = calcular_puntaje(puntaje_inicial, puntos_distancia, puntos_horario, puntos_contenido);
+        puntaje_final = calcular_puntaje(puntos_distancia, puntos_horario, puntos_contenido);
         estado = asignar_estado(puntaje_final);
 
         printf("Con las respuestas brindadas, su puntaje final es %i.\nEl estado de la inspección de seguridad del monorriel es: -%s-\n", puntaje_final, estado);
