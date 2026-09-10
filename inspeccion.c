@@ -9,7 +9,7 @@ const int MAXIMO_RANGO_PASAJEROS = 250;
 
 const int MAXIMO_CAPACIDAD = 180;
 
-const float MINIMA_DISTANCIA_SEGURA = 0.0;
+const float MINIMA_DISTANCIA_SEGURA = 1.0;
 const float MAXIMA_DISTANCIA = 150.0;
 
 const float MAXIMA_DISTANCIA_SEGURA = 50.0;
@@ -54,94 +54,72 @@ const char *SU_RESPUESTA = "Su respuesta es: ";
 
 // Pre: -
 // Post: Pide al usuario la cantidad de pasajeros que realizarán el viaje inaugural y lo devuelve.
+// Post: Valida que la cantidad de pasajeros ingresada esté entre MINIMO_RANGO_PASAJEROS y MAXIMO_RANGO_PASAJEROS.
 void obtener_cantidad_pasajeros(int *cantidad_pasajeros) {
-    printf("¿Cuántos pasajeros realizarán el viaje inaugural? (1-250)\n");
-    printf("%s", SU_RESPUESTA);
-    scanf("%i", cantidad_pasajeros);
+    do {
+        printf("¿Cuántos pasajeros realizarán el viaje inaugural? (1-250)\n");
+        printf("%s", SU_RESPUESTA);
+        scanf("%i", cantidad_pasajeros);
+        
+        if ((*cantidad_pasajeros < MINIMO_RANGO_PASAJEROS) || (*cantidad_pasajeros > MAXIMO_RANGO_PASAJEROS)) {
+            printf("El valor ingresado no está dentro del rango válido.\n");
+        }
+    } while ((*cantidad_pasajeros < MINIMO_RANGO_PASAJEROS) || (*cantidad_pasajeros > MAXIMO_RANGO_PASAJEROS));
 }
-
 // Pre: -
+// Post: Valida que la distancia de frenado ingresada esté entre MINIMA_DISTANCIA_SEGURA y MAXIMA_DISTANCIA.
 // Post: Pide al usuario la distancia de frenado y la devuelve.
 void obtener_distancia_frenado(float *distancia_frenado) {
-    printf("¿Qué distancia recorrió el monorriel durante la prueba de los frenos marca Patito? (1-150)\n");
-    printf("%s", SU_RESPUESTA);
-    scanf("%f", distancia_frenado);
+    do {
+        printf("¿Qué distancia recorrió el monorriel durante la prueba de los frenos marca Patito? (1-150)\n");
+        printf("%s", SU_RESPUESTA);
+        scanf("%f", distancia_frenado);
+    
+        if ((*distancia_frenado < MINIMA_DISTANCIA_SEGURA) || (*distancia_frenado > MAXIMA_DISTANCIA)) {
+            printf("El valor ingresado no está dentro del rango válido.\n");
+        }
+    } while ((*distancia_frenado < MINIMA_DISTANCIA_SEGURA) || (*distancia_frenado > MAXIMA_DISTANCIA));
+    
 }
 
 // Pre: -
 // Post: Pide al usuario el horario programado y lo devuelve.
+// Post:
+//  Valida que la hora esté entre HORA_MINIMA y HORA_MAXIMA.
+//  Valida que el minuto esté entre MINUTO_MINIMO y MINUTO_MAXIMO.
 void obtener_horario_programado(horario_t *horario) {
-    printf("¿A qué hora está programado el viaje inaugural? (formato: hh:mm)\n");
-    printf("%s", SU_RESPUESTA);
-    scanf("%i:%i", &horario->hora, &horario->minuto);
+    do {
+        printf("¿A qué hora está programado el viaje inaugural? (formato: hh:mm)\n");
+        printf("%s", SU_RESPUESTA);
+        scanf("%i:%i", &horario->hora, &horario->minuto);
+
+        if (((horario->hora < HORA_MINIMA) || (horario->hora > HORA_MAXIMA)) || ((horario->minuto < MINUTO_MINIMO) || (horario->minuto > MINUTO_MAXIMO))) {
+            printf("El valor ingresado no está dentro del rango válido.\n");
+        }
+    } while (((horario->hora < HORA_MINIMA) || (horario->hora > HORA_MAXIMA)) || ((horario->minuto < MINUTO_MINIMO) || (horario->minuto > MINUTO_MAXIMO)));
 }
 
 // Pre: -
 // Post: Pide al usuario el contenido del compartimiento y lo devuelve.
-void obtener_contenido_compartimiento(char *contenido) { 
-    printf("¿Qué encontró Marge en el compartimiento del matafuegos?\n");
-    printf("Ingresar respuesta en mayúsculas.\n");
-    printf("[M] Matafuegos\n");
-    printf("[Z] Familia de zarigüeyas\n");
-    printf("[V] Compartimiento vacío\n");
-    printf("%s", SU_RESPUESTA);
-    scanf(" %c", contenido);
-}
-
-// Pre: -
-// Post: Valida que la cantidad de pasajeros ingresada esté entre MINIMO_RANGO_PASAJEROS y MAXIMO_RANGO_PASAJEROS.
-bool validar_ingreso_pasajeros(int *cantidad_pasajeros) {
-    bool es_valido = true;
-    if ((MINIMO_RANGO_PASAJEROS <= *cantidad_pasajeros) && (*cantidad_pasajeros <= MAXIMO_RANGO_PASAJEROS)) {
-        es_valido = false;
-    }
-    else {
-        printf("El valor ingresado no está dentro del rango válido.\n");
-    }
-    return es_valido;
-}
-
-// Pre: -
-// Post: Valida que la distancia de frenado ingresada esté entre MINIMA_DISTANCIA_SEGURA y MAXIMA_DISTANCIA.
-bool validar_ingreso_distancia(float *distancia_frenado) {
-    bool es_valido = true;
-    if ((MINIMA_DISTANCIA_SEGURA < *distancia_frenado) && (*distancia_frenado <= MAXIMA_DISTANCIA)){
-        es_valido = false;
-    }
-    else {
-        printf("El valor ingresado no está dentro del rango válido.\n");
-    }
-    return es_valido;
-}
-
-// Pre: -
-// Post:
-//  Valida que la hora esté entre HORA_MINIMA y HORA_MAXIMA.
-//  Valida que el minuto esté entre MINUTO_MINIMO y MINUTO_MAXIMO.
-bool validar_ingreso_horario(horario_t *horario) {
-    bool es_valido = true;
-    if (horario->hora >= HORA_MINIMA && horario->minuto >= MINUTO_MINIMO) {
-        if ((HORA_MINIMA <= horario->hora && horario->hora <= HORA_MAXIMA) && (MINUTO_MINIMO <= horario->minuto && horario->minuto <= MINUTO_MAXIMO)) {
-            es_valido = false;
-        }
-    }
-    else {
-        printf("El horario ingresado no tiene un formato válido.");
-    }
-    return es_valido;
-}
-
-// Pre: -
 // Post: Valida que el contenido ingresado sea uno de los valores válidos(VACIO, ZARIGUEYAS, MATAFUEGOS).
-bool validar_ingreso_contenido(char *contenido) {
-    bool es_valido = true;
-    if (*contenido == VACIO || *contenido == ZARIGUEYAS || *contenido == MATAFUEGOS) {
-        es_valido = false;
-    }
-    else {
-        printf("La respuesta ingresada no es válida. Ingresar M, Z o V.\n");
-    }
-    return es_valido;
+void obtener_contenido_compartimiento(char *contenido) { 
+    do {
+        printf("¿Qué encontró Marge en el compartimiento del matafuegos?\n");
+        printf("Ingresar respuesta en mayúsculas.\n");
+        printf("[M] Matafuegos\n");
+        printf("[Z] Familia de zarigüeyas\n");
+        printf("[V] Compartimiento vacío\n");
+        printf("%s", SU_RESPUESTA);
+        scanf(" %c", contenido);
+
+        if (((*contenido != VACIO) && (*contenido != ZARIGUEYAS) && (*contenido != MATAFUEGOS))) {
+            printf("La respuesta ingresada no es válida. Ingresar M, Z o V.\n");
+        }
+    } while ((*contenido != VACIO) && (*contenido != ZARIGUEYAS) && (*contenido != MATAFUEGOS));
+}
+
+bool validar_ingreso_pasajeros(int *cantidad_pasajeros) {
+    return (*cantidad_pasajeros <= MAXIMO_CAPACIDAD);
 }
 
 // Pre: distancia_frenado debe estar entre MINIMA_DISTANCIA_SEGURA y MAXIMA_DISTANCIA.
@@ -231,59 +209,35 @@ const char *asignar_estado(int puntaje_final) {
 
 int main() {
     int cantidad_pasajeros = 0;
+
+    obtener_cantidad_pasajeros(&cantidad_pasajeros);
+
     float distancia_frenado = 0.0;
     horario_t horario;
     char contenido = ' ';
 
-    bool continuar = false;
-    bool condicion;
-
-    int puntaje_final = 0;
-    int puntos_distancia = 0;
-    int puntos_horario = 0;
-    int puntos_contenido = 0;
-
+    int puntaje_final;
+    
     const char *estado;
-
-    do {
-        obtener_cantidad_pasajeros(&cantidad_pasajeros);
-        condicion = validar_ingreso_pasajeros(&cantidad_pasajeros);
-    } while (condicion);
-
-    if (cantidad_pasajeros <= MAXIMO_CAPACIDAD) {
-        continuar = true;
-    }
-    else {
+    
+    if(!validar_ingreso_pasajeros(&cantidad_pasajeros)) {
         printf("-%s-\n", ESTADO_NO_APTO);
     }
-
-    if (continuar) {
-        do {
-            obtener_distancia_frenado(&distancia_frenado);
-            condicion = validar_ingreso_distancia(&distancia_frenado);
-            puntos_distancia = asignar_puntos_distancia(distancia_frenado);
-            printf("puntos distancia: %i\n", puntos_distancia);
-        } while (condicion);
-
-        do {
-            obtener_horario_programado(&horario);
-            condicion = validar_ingreso_horario(&horario);
-            puntos_horario = asignar_puntos_horario(horario);
-            printf("hora: %i, minuto: %i\n", horario.hora, horario.minuto);
-            printf("puntos horario: %i\n", puntos_horario);
-        } while (condicion);
-
-        do {
-            obtener_contenido_compartimiento(&contenido);
-            condicion = validar_ingreso_contenido(&contenido);
-            puntos_contenido = asignar_puntos_contenido(contenido);
-            printf("puntos contenido: %i\n", puntos_contenido);
-        } while (condicion);
-
+    else {
+        obtener_distancia_frenado(&distancia_frenado);
+        obtener_horario_programado(&horario);
+        obtener_contenido_compartimiento(&contenido);
+        
+        int puntos_distancia = asignar_puntos_distancia(distancia_frenado);
+        int puntos_horario = asignar_puntos_horario(horario);
+        int puntos_contenido = asignar_puntos_contenido(contenido);
+        
         puntaje_final = calcular_puntaje(puntos_distancia, puntos_horario, puntos_contenido);
-        estado = asignar_estado(puntaje_final);
 
+        estado = asignar_estado(puntaje_final);
+        
         printf("Con las respuestas brindadas, su puntaje final es %i.\nEl estado de la inspección de seguridad del monorriel es: -%s-\n", puntaje_final, estado);
     }
+
     return 0;
 }
